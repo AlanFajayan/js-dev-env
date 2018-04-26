@@ -4,3 +4,13 @@ node buildScripts/srcServer.js
 # run web server (localtunnel)
 lt --port 3000 --subdomain hikahos
 example response: "your url is: https://hikahos.localtunnel.me"
+
+# automate the running of buildScripts scripts
+* in the package.json file, update as follows:
+  "scripts": {
+      "prestart": "node buildScripts/startMessage.js",
+      "start": "node buildScripts/srcServer.js"
+    },
+* in the terminal, type "npm start"
+
+#
