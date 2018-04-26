@@ -13,4 +13,6 @@ example response: "your url is: https://hikahos.localtunnel.me"
     },
 * in the terminal, type "npm start"
 
-#
+# continuous integration server - https://travis-ci.org
+# can sign in using GitHub account
+
