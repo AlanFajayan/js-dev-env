@@ -16,3 +16,10 @@ example response: "your url is: https://hikahos.localtunnel.me"
 # continuous integration server - https://travis-ci.org
 # can sign in using GitHub account
 
+# steps to save to version control:
+  * git status                            // to view pending commits
+  * git add .                             // to add all changed files
+  * git commit -m "description of commit" // commits locally
+  * git push                              // commits to GitHub
+
+#
