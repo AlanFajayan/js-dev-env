@@ -7,6 +7,7 @@ const courseValue = numeral(1000).format("$0,0.00");
 console.log(`I would pay ${courseValue} for this awesome course!`);
 */
 
+import "./index.css";
 import {getUsers, deleteUser} from "./api/userAPI";
 
 // populate table of users via API call
