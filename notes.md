@@ -9,6 +9,11 @@ Run app in silent mode: 'npm start -s'
   * git fetch
   * git merge
 
+# VSTS
+  * to install TFVC CLI, type 'sudo npm install -g tfx-cli'
+  * to push project to VSTS, type 'git remote add origin https://fajayan.visualstudio.com/_git/js-dev-env'
+  
+
 # JavaScript Editors
   * Atom
   * WebStorm
