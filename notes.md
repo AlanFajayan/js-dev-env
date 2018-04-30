@@ -1,13 +1,17 @@
 Run app in silent mode: 'npm start -s'
 
 # Git
-  * git status                            // to view pending commits
-  * git add .                             // to stage changes
-  * git commit -m "description of commit" // commits locally
-  * git push                              // commits to GitHub
-  * git pull
-  * git fetch
-  * git merge
+  - create a new repository in GitHub, and add Node to .gitignore
+  - clone the repo and copy the url it provides
+  - in terminal, type 'git clone 'https://github.com/alanfajayan/js-dev-env.git Development/js-dev-env'
+  - useful commands
+    * git status                            // to view pending commits
+    * git add .                             // to stage changed files
+    * git commit -m "description of commit" // to commit changes locally
+    * git push                              // to push your project to GitHub
+    * git pull
+    * git fetch
+    * git merge
 
 # VSTS
   * to install TFVC CLI, type 'sudo npm install -g tfx-cli'
