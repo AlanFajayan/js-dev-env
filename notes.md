@@ -1,5 +1,14 @@
 Run app in silent mode: 'npm start -s'
 
+# Git
+  * git status                            // to view pending commits
+  * git add .                             // to stage changes
+  * git commit -m "description of commit" // commits locally
+  * git push                              // commits to GitHub
+  * git pull
+  * git fetch
+  * git merge
+
 # JavaScript Editors
   * Atom
   * WebStorm
@@ -28,6 +37,7 @@ Run app in silent mode: 'npm start -s'
   * install the extension 'EditorConfig for VS Code'
 
 # Package Managers
+  Standardized method for sharing code
   * Bower
   * npm (Node.js installation comes with npm)
   * JSPM
@@ -107,12 +117,14 @@ Run app in silent mode: 'npm start -s'
     - in terminal, type 'npm install' to download and install the dependencies
 
 # Security scanning
+  Checking for security vulnerability in dependencies
   * retire.js
   * Node Security Platform
     - in terminal, type 'npm install -g nsp' to install Node Security Platform
     - type 'nsp check' to scan for vulnerabilities
 
 # Development webservers
+  View app during development
   * http-server
   * live-server
   * Express
@@ -153,6 +165,7 @@ Run app in silent mode: 'npm start -s'
   - in terminal, type 'node folerName/srcServer.js'
 
 # Sharing Work-in-progress
+  Share app in public external site
   * localtunnel
   * ngrok
   * Surge
@@ -163,6 +176,7 @@ Run app in silent mode: 'npm start -s'
     + after starting the app, type 'lt --port 3000 --subdomain hikahos'
 
 # Automation
+  Ensure that builds and related tooling are integrated in a consistent manner
   * Grunt
   * Gulp
   * npm Scripts
@@ -195,6 +209,7 @@ Run app in silent mode: 'npm start -s'
   - in terminal, type 'npm start -s' to run the 'start' script in silent mode
 
 # Transpilers
+  Allows modern, standards-based JS by compiling down to ES5
   * Babel
   * TypeScript
   * Elm
@@ -213,6 +228,12 @@ Run app in silent mode: 'npm start -s'
       "prestart": "babel-node buildScripts/startMessage.js"
 
 # Bundlers
+  Why bundle?
+  - npm packages use the CommonJS pattern, which doesn't work in browsers
+  - package project into file(s)
+  - improve Node performance
+
+  Bundling platforms
   * Require.js
   * Browserify
   * Webpack
@@ -290,6 +311,7 @@ Run app in silent mode: 'npm start -s'
   - to use inline-source-map, type 'debugger;' before the line of code to put a breakpoint on; this allows the developer to see the original code
 
 # Linters
+  Enforce consistency and avoid mistakes
   * JSLint
   * JSHint
   * ESLint
@@ -394,8 +416,356 @@ Run app in silent mode: 'npm start -s'
         - "10"
       ----------- code block ------------
 
-# Git
-  * git status                            // to view pending commits
-  * git add .                             // to stage changes
-  * git commit -m "description of commit" // commits locally
-  * git push                              // commits to GitHub
+# HTTP Calls
+  JS handling of request and respone
+
+  Approaches
+  * Node
+    - http
+    - request
+  * Browser
+    - XMLHttpRequest (xhr)
+    - jQuery
+    - Framework-based (e.g. Angular built-in http call)
+    - Fetch
+  * Node & Browser
+    - isomorphic-fetch
+    - xhr
+    - SuperAgent
+    - Axios
+  
+  - to use Fetch, create an api js file (e.g.'userApi.js')
+    ----------- code block ------------
+    import "whatwg-fetch";    
+
+    export function getUsers() {
+      return get("users");
+    }
+
+    function get(url) {
+      return fetch(baseUrl + url).then(onSuccess, onError);
+    }
+    
+    function onSuccess(response) {
+      return response.json();
+    }
+
+    function onError(error) {
+      console.log(error); 
+    }
+    ----------- code block ------------
+  
+  Mocking HTTP usage
+  * unit testing
+  * instant response
+  * keep working when services are down
+  * rapid prototyping
+  * avoid inter-team bottlenecks
+  * work offline
+
+  Apps for mocking HTTP
+  * Nock
+  * static JSON
+  * Development webserver
+    - api-mock
+    - JSON server
+    - JSON schema faker
+    - Browsersync
+    - Express
+  
+  Plan for mocking HTTP
+  * declare schema - JSON schema faker
+    - create a schema js file (e.g. 'mockDataSchema.js')
+
+      ----------- code block ------------
+      export const schema = {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 5,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "unique": true,
+                  "minimum": 1
+                },
+                "firstName": {
+                  "type": "string",
+                  "faker": "name.firstName"
+                },
+                "lastName": {
+                  "type": "string",
+                  "faker": "name.lastName"
+                },
+                "email": {
+                  "type": "string",
+                  "faker": "internet.email"
+                }
+              },
+              "required": ["id", "firstName", "lastName", "email"]
+            }
+          }
+        },
+        "required": ["users"]
+      };
+      ----------- code block ------------
+
+  * generate random data - faker.js (other options: chance.js, randexp.js)
+    - to create mock data with faker, create js file (e.g. 'generateMockData.js')
+
+      ----------- code block ------------
+      import jsf from "json-schema-faker";
+      import {schema} from "./mockDataSchema";
+      import fs from "fs";
+      import chalk from "chalk";
+
+      const json = JSON.stringify(jsf(schema));
+
+      fs.writeFile("./src/api/db.json", json, function(err) {
+        if (err) {
+          return console.log(chalk.red(err));
+        } else {
+          console.log(chalk.green("Mock data generated."));
+        }
+      });
+      ----------- code block ------------
+    - run 'generateMockData' in package.json's scripts section
+        "generate-mock-data": "babel-node buildScripts/generateMockData",
+
+  * serve data via API - JSON server
+    - add in package.json's scripts section
+      "prestart-mockapi": "npm run generate-mock-data",
+      "start-mockapi": "json-server --watch src/api/db.json --port 3001",
+  
+# Production Build
+  * Minification and Sourcemaps
+    - shortens variable and function names
+    - removes comments
+    - removes whitespace and new lines
+    - dead code elimination (tree-shaking)
+    - debug via sourcemap
+
+    + using source-map and minify in prod, create webpack.config file (e.g. 'webpack.config.prod.js')
+
+      ----------- code block ------------
+      import path from "path";    
+      import webpack from "webpack";  
+
+      export default {
+        debug: true,
+        devtool: "source-map",
+        noInfo: false,
+        entry: {
+          path.resolve(__dirname, "src/index")
+        },
+        target: "web",
+        output: {
+          path: path.resolve(__dirname, "dist"),
+          publicPath: "/",
+          filename: "bundle.js"
+        },
+        plugins: [
+          // eliminate duplicate packages
+          new webpack.optimize.DedupePlugin(),
+
+          // minify js
+          new webpack.optimize.UglifyJSPlugin()
+        ]
+      ----------- code block ------------
+
+    + create a build file to run the webpack.config.prod (e.g. 'build.js')
+
+      ----------- code block ------------
+      /* eslint-disable no-console */
+      import webpack from "webpack";
+      import webpackConfig from "../webpack.config.prod";
+      import chalk from "chalk";
+
+      process.env.NODE_ENV = "production";
+
+      console.log(chalk.blue("Generating minified bundle for production. This will take a moment..."));
+
+      webpack(webpackConfig).run((err, stats) => {
+        if (err) { // a fatal error occurred; stop here.
+          console.log(chalk.red(err));
+          return 1;
+        }
+
+        const jsonStats = stats.toJson();
+
+        if (jsonStats.hasErrors) {
+          return jsonStats.errors.map(error => console.log(chalk.red(error)));
+        }
+
+        if (jsonStats.hasWarnings) {
+          console.log(chalk.yellow("Webpack generated the following warnings: "));
+          jsonStats.warnings.map(warning => console.log(chalk.yellow(warning)));
+        }
+
+        console.log(`Webpack stats:${stats}`);
+
+        // if we got this far, the build succeeded.
+        console.log(chalk.green("Your app has been built for production and written to /dist!"))
+
+        return 0;
+      });
+      ----------- code block ------------
+    
+    + to automate prod build, add in package.json's scripts section
+        "clean-dist": "rimraf ./dist && mkdir dist",
+        "prebuild": "npm-run-all clean-dist test lint",
+        "build": "babel-node buildScripts/build.js",
+        "postbuild": "babel-node buildScripts/distServer.js",
+  
+  * Dynamic HTML
+    - manipulate HTML for prod by using dynamic bundle names and injecting prod-only resources
+
+    - referencing bundled assets in HTML
+      + hard coding as inline tag
+      + manipulate via Node
+      + html-webpack-plugin
+
+    - to use html-webpack-plugin to create dynamic HTML
+      + add to 'webpack.config.prod.js'
+
+        ----------- code block ------------
+        import HtmlWebpackPlugin from "html-webpack-plugin";
+
+        plugins: [
+          // create html file that includes reference to bundled js
+          new HtmlWebpackPlugin({
+            template: "src/index.html",
+            minify: {
+              removeComments: true,
+              collapseWhitespace: true,
+              removeRedundantAttributes: true,
+              useShortDoctype: true,
+              removeEmptyAttributes: true,
+              removeStyleLinkTypeAttributes: true,
+              keepClosingSlash: true,
+              minifyJS: true,
+              minifyCSS: true,
+              minifyURLs: true
+            },
+            inject: true
+          })
+        ],
+        ----------- code block ------------
+
+  * Bundle splitting
+    - users don't have to download entire app when only parts changed
+    - to use bundle splitting with webpack, edit webpack.config.prod.js
+
+      ----------- code block ------------
+        output: {
+          path: path.resolve(__dirname, "dist"),
+          publicPath: "/",
+          filename: "[name].js"
+        },
+        entry: {
+          vendor: path.resolve(__dirname, "src/vendor"),
+          main: path.resolve(__dirname, "src/index")
+        },
+
+        plugins: [          
+          // use CommonsChunkPlugin to create a separate bundle of vendor libraries so that they're cached separately
+          new webpack.optimize.CommonsChunkPlugin({
+            name: "vendor"
+          }),
+      ----------- code block ------------
+
+  * Cache busting
+    - ensure users receive latest code on deployment
+    - plan for busting cache
+      + hash bundle filename
+      + generate html dynamically
+    - to use webpack-md5-hash for cache busting, edit webpack.config.prod.js
+
+        ----------- code block ------------
+        import WebpackMd5Hash from "webpack-md5-hash";
+
+        output: {
+          path: path.resolve(__dirname, "dist"),
+          publicPath: "/",
+          filename: "[name].[chunkhash].js"
+        },
+        plugins: [          
+          // hash the files using MD5 so that their names change when content changes
+          new WebpackMd5Hash(),          
+          }),
+        ----------- code block ------------
+
+  * Error logging
+    - facilitate debugging
+    - error logging apps
+      + TrackJS
+      + Sentry
+      + New Relic
+      + Raygun
+    
+# Production Deploy
+  * Separate UI and API
+    - simple, low-risk, UI-only deploys
+    - separates concerns
+      + separate teams
+      + less to understand
+      + scale back-end separately
+    - cheap UI hosting
+    - serve UI via a CDN
+    - use the API tech you like (JS, C#, Java, etc.)
+  * Cloud hosting
+    - AWS
+    - Azure
+    - Heroku
+    - Firebase
+    - Google Cloud Platform
+    - Pubstorm
+    - GitHub Pages (static files only)
+    - Surge (static files only)
+
+    - to install Heroku cli, type in terminal 'npm install -g heroku'
+    - to use Heroku for API deployment, set up an account in https://devcenter.heroku.com
+      + in package.json, add in 'dependencies' section
+        "dependencies": {
+          "cors": "2.8.1",
+          "express": "4.13.3"
+        }
+      + add in index.js
+        var express = require("express");
+        var cors = require("cors");
+      + in app.json 
+        {
+          "name": "Node API example",
+          "description": "A simple API built in Node and Express hosted on Heroku",
+          "repository": "https://github.com/alanfajayan/js-dev-env-demo-api",
+          "keywords": ["node", "express", "static"]
+        }
+      + in Procfile
+        web: node index.js
+    - to deploy to Heroku, type in terminal
+      + heroku login (enter email and password credentials)
+      + heroku create (returns a url - e.g. 'https://protected-oasis-22659.herokuapp.com')
+      + heroku git:remote -a protected-oasis-22659
+      + git push heroku master
+    - prepare files for production deployment
+      + edit baseUrl.js
+          export default function getBaseUrl() { 
+            return getQueryStringParameterByName("useMockApi") ? "http://localhost:3001/" : "https://protected-oasis-22659.herokuapp.com/";
+          }
+
+    - to use Surge for UI deployment, add in package.json's scripts section
+        "deploy": "surge ./dist"
+    - type in terminal
+      + npm run build -s
+      + npm run deploy
+    - a random url is generated by Surge (e.g. 'first-attempt.surge.sh')
+  
+  * Update approaches
+    - Yeoman
+    - GitHub
+    - npm
+  
